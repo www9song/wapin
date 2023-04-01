@@ -1,6 +1,8 @@
 FROM debian
-EXPOSE 801
+EXPOSE 80
 WORKDIR /app 
-ADD v2ray.sh /app 
-RUN chmod a+x ./v2ray.sh
-CMD [".", "./v2ray.sh"]
+COPY v2ray.sh /app 
+RUN chmod +x ./v2ray.sh&&\
+    apt-get update &&\
+    apt-get install -y iputils-ping procps curl python3 python3-pip
+CMD ["python3","-m","http.server","80"]
