@@ -109,24 +109,6 @@ removeV2Ray() {
     crontab -l|sed '/SHELL=/d;/v2ray/d'|sed '/SHELL=/d;/xray/d' > crontab.txt
     crontab crontab.txt >/dev/null 2>&1
     rm -f crontab.txt >/dev/null 2>&1
-
-    if [[ ${PACKAGE_MANAGER} == 'dnf' || ${PACKAGE_MANAGER} == 'yum' ]];then
-        systemctl restart crond >/dev/null 2>&1
-    else
-        systemctl restart cron >/dev/null 2>&1
-    fi
-
-    #删除multi-v2ray环境变量
-    sed -i '/v2ray/d' ~/$ENV_FILE
-    sed -i '/xray/d' ~/$ENV_FILE
-    source ~/$ENV_FILE
-
-    RC_SERVICE=`systemctl status rc-local|grep loaded|egrep -o "[A-Za-z/]+/rc-local.service"`
-
-    RC_FILE=`cat $RC_SERVICE|grep ExecStart|awk '{print $1}'|cut -d = -f2`
-
-    sed -i '/iptables/d' ~/$RC_FILE
-
     colorEcho ${GREEN} "uninstall success!"
 }
 
@@ -172,31 +154,6 @@ updateProject() {
 
     [[ -e /etc/profile.d/iptables.sh ]] && rm -f /etc/profile.d/iptables.sh
 
-    RC_SERVICE=`systemctl status rc-local|grep loaded|egrep -o "[A-Za-z/]+/rc-local.service"`
-
-    RC_FILE=`cat $RC_SERVICE|grep ExecStart|awk '{print $1}'|cut -d = -f2`
-
-    if [[ ! -e $RC_FILE || -z `cat $RC_FILE|grep iptables` ]];then
-        LOCAL_IP=`curl -s http://api.ipify.org 2>/dev/null`
-        [[ `echo $LOCAL_IP|grep :` ]] && IPTABLE_WAY="ip6tables" || IPTABLE_WAY="iptables" 
-        if [[ ! -e $RC_FILE || -z `cat $RC_FILE|grep "/bin/bash"` ]];then
-            echo "#!/bin/bash" >> $RC_FILE
-        fi
-        if [[ -z `cat $RC_SERVICE|grep "\[Install\]"` ]];then
-            cat >> $RC_SERVICE << EOF
-
-[Install]
-WantedBy=multi-user.target
-EOF
-            systemctl daemon-reload
-        fi
-        echo "[[ -e /root/.iptables ]] && $IPTABLE_WAY-restore -c < /root/.iptables" >> $RC_FILE
-        chmod +x $RC_FILE
-        systemctl restart rc-local
-        systemctl enable rc-local
-
-        $IPTABLE_WAY-save -c > /root/.iptables
-    fi
 
     pip install -U v2ray_util
 
