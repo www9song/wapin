@@ -1,0 +1,30 @@
+{
+  "log": {
+    "loglevel": "info",
+    "access": "/app/log/access.log", // 这是 Linux 的路径
+    "error": "/app/log/error.log"
+  },
+  "inbounds": [
+    {
+      "port": 80, // 服务器监听端口
+      "protocol": "vmess",    // 主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "9102a081-f0b6-4711-ac9b-d2c7add31a4f",  // 用户 ID，客户端与服务器必须相同
+            "alterId": 64
+          }
+        ]
+      },
+      "streamSettings": {
+        "network":"ws"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",  // 主传出协议
+      "settings": {}
+    }
+  ]
+}
