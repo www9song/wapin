@@ -1,12 +1,12 @@
 {
   "log": {
-    "loglevel": "info",
+    "loglevel": "debug",
     "access": "/app/log/access.log", // 这是 Linux 的路径
     "error": "/app/log/error.log"
   },
   "inbounds": [
     {
-      "port": 80, // 服务器监听端口
+      "port": 801, // 服务器监听端口
       "protocol": "vmess",    // 主传入协议
       "settings": {
         "clients": [
