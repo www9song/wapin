@@ -1,6 +1,6 @@
 FROM debian
 #FROM ubuntu
-EXPOSE 80
+EXPOSE 801
 USER root
 WORKDIR /app 
 COPY config.json nginx.conf start.sh /app/
